@@ -1,0 +1,78 @@
+let data = JSON.parse(localStorage.getItem("keuangan")) || [];
+
+function simpan() {
+  localStorage.setItem("keuangan", JSON.stringify(data));
+}
+
+function tambahData() {
+  const tgl = tanggal.value;
+  const ket = keterangan.value;
+  const jml = Number(jumlah.value);
+  const tipe = document.getElementById("tipe").value;
+
+  if (!tgl || !ket || !jml) return alert("Lengkapi data!");
+
+  data.push({ tgl, ket, jml, tipe });
+  simpan();
+  render();
+}
+
+function hapus(i) {
+  data.splice(i, 1);
+  simpan();
+  render();
+}
+
+function edit(i) {
+  const d = data[i];
+  tanggal.value = d.tgl;
+  keterangan.value = d.ket;
+  jumlah.value = d.jml;
+  tipe.value = d.tipe;
+  hapus(i);
+}
+
+function render() {
+  const tbody = document.getElementById("tabel");
+  tbody.innerHTML = "";
+
+  const bulan = filterBulan.value;
+  let saldo = 0;
+
+  data.forEach((d, i) => {
+    if (bulan && !d.tgl.startsWith(bulan)) return;
+
+    if (d.tipe === "masuk") saldo += d.jml;
+    else saldo -= d.jml;
+
+    tbody.innerHTML += `
+      <tr>
+        <td>${d.tgl}</td>
+        <td>${d.ket}</td>
+        <td>${d.tipe === "masuk" ? d.jml : "-"}</td>
+        <td>${d.tipe === "keluar" ? d.jml : "-"}</td>
+        <td>
+          <button onclick="edit(${i})">Edit</button>
+          <button onclick="hapus(${i})">Hapus</button>
+        </td>
+      </tr>`;
+  });
+
+  saldoEl.innerText = "Saldo: Rp " + saldo.toLocaleString("id-ID");
+}
+
+function exportExcel() {
+  let csv = "Tanggal,Keterangan,Pemasukan,Pengeluaran\n";
+  data.forEach(d => {
+    csv += `${d.tgl},${d.ket},${d.tipe==="masuk"?d.jml:""},${d.tipe==="keluar"?d.jml:""}\n`;
+  });
+
+  const blob = new Blob([csv], { type: "text/csv" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "keuangan.csv";
+  a.click();
+}
+
+const saldoEl = document.getElementById("saldo");
+render();
