@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Catatan Keuangan</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h2>📒 Catatan Pemasukan & Pengeluaran</h2>
+
+<div class="form">
+  <input type="date" id="tanggal">
+  <input type="text" id="keterangan" placeholder="Keterangan">
+  <input type="number" id="jumlah" placeholder="Jumlah">
+  <select id="tipe">
+    <option value="masuk">Pemasukan</option>
+    <option value="keluar">Pengeluaran</option>
+  </select>
+  <button onclick="tambahData()">Tambah</button>
+</div>
+
+<div class="filter">
+  <input type="month" id="filterBulan" onchange="render()">
+  <button onclick="exportExcel()">Export Excel</button>
+</div>
+
+<h3 id
